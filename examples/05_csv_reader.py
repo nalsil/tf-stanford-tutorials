@@ -9,7 +9,7 @@ You can download heart.csv in the data folder.
 
 import tensorflow as tf
 
-DATA_PATH = 'data/heart.csv'
+DATA_PATH = '../data/heart.csv'
 BATCH_SIZE = 3
 N_FEATURES = 9
 
@@ -31,16 +31,20 @@ def batch_generator(filenames):
     record_defaults = [[1.0] for _ in range(N_FEATURES)]
     record_defaults[4] = ['']
     record_defaults.append([1])
+    print('record_defaults=', record_defaults)
 
     # read in the 10 rows of data
-    content = tf.decode_csv(value, record_defaults=record_defaults) 
+    content = tf.decode_csv(value, record_defaults=record_defaults)
+    print('content=', content)
 
     # convert the 5th column (present/absent) to the binary value 0 and 1
     condition = tf.equal(content[4], tf.constant('Present'))
-    content[4] = tf.select(condition, tf.constant(1.0), tf.constant(0.0))
+    #content[4] = tf.select(condition, tf.constant(1.0), tf.constant(0.0))
+    content[4] = tf.where(condition, tf.constant(1.0), tf.constant(0.0))
 
     # pack all 9 features into a tensor
-    features = tf.pack(content[:N_FEATURES])
+    #features = tf.pack(content[:N_FEATURES])
+    features = tf.stack(content[:N_FEATURES])
 
     # assign the last column to label
     label = content[-1]
@@ -65,7 +69,7 @@ def generate_batches(data_batch, label_batch):
         threads = tf.train.start_queue_runners(coord=coord)
         for _ in range(10): # generate 10 batches
             features, labels = sess.run([data_batch, label_batch])
-            print features
+            print (features)
         coord.request_stop()
         coord.join(threads)
 
