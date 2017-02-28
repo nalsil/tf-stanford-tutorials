@@ -8,7 +8,10 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.contrib.tensorboard.plugins import projector
 
+# if you want to work the below code on window pycharm,
+# you have to set the examples folder as 'source' using settings > Project > Project structure
 from process_data import process_data
+
 
 VOCAB_SIZE = 50000
 BATCH_SIZE = 128
@@ -55,8 +58,10 @@ def word2vec(batch_gen):
 
         total_loss = 0.0 # we use this to calculate late average loss in the last SKIP_STEP steps
         writer = tf.summary.FileWriter('./my_graph/no_frills/', sess.graph)
-        for index in xrange(NUM_TRAIN_STEPS):
-            centers, targets = batch_gen.next()
+        for index in range(NUM_TRAIN_STEPS):
+            # centers, targets = batch_gen.next()
+            centers, targets = next(batch_gen)
+
             loss_batch, _ = sess.run([loss, optimizer], 
                                     feed_dict={center_words: centers, target_words: targets})
             total_loss += loss_batch
@@ -66,7 +71,10 @@ def word2vec(batch_gen):
         writer.close()
 
 def main():
+
     batch_gen = process_data(VOCAB_SIZE, BATCH_SIZE, SKIP_WINDOW)
+
+    # print('=== Begin of word2vec(batch_gen) ===')
     word2vec(batch_gen)
 
 if __name__ == '__main__':

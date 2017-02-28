@@ -98,16 +98,18 @@ def train_model(model, batch_gen, num_train_steps, weights_fld):
     initial_step = 0
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
-        ckpt = tf.train.get_checkpoint_state(os.path.dirname('checkpoints/checkpoint'))
+        ckpt = tf.train.get_checkpoint_state(os.path.dirname('./checkpoints/checkpoint'))
         # if that checkpoint exists, restore from checkpoint
         if ckpt and ckpt.model_checkpoint_path:
             saver.restore(sess, ckpt.model_checkpoint_path)
 
         total_loss = 0.0 # we use this to calculate late average loss in the last SKIP_STEP steps
-        writer = tf.summary.FileWriter('improved_graph/lr' + str(LEARNING_RATE), sess.graph)
+        writer = tf.summary.FileWriter('./my_graph/improved_graph/lr' + str(LEARNING_RATE), sess.graph)
         initial_step = model.global_step.eval()
-        for index in xrange(initial_step, initial_step + num_train_steps):
-            centers, targets = batch_gen.next()
+        for index in range(initial_step, initial_step + num_train_steps):
+            # centers, targets = batch_gen.next()
+            centers, targets = next(batch_gen)
+
             feed_dict={model.center_words: centers, model.target_words: targets}
             loss_batch, _, summary = sess.run([model.loss, model.optimizer, model.summary_op], 
                                               feed_dict=feed_dict)
@@ -116,7 +118,7 @@ def train_model(model, batch_gen, num_train_steps, weights_fld):
             if (index + 1) % SKIP_STEP == 0:
                 print('Average loss at step {}: {:5.1f}'.format(index, total_loss / SKIP_STEP))
                 total_loss = 0.0
-                saver.save(sess, 'checkpoints/skip-gram', index)
+                saver.save(sess, './checkpoints/skip-gram', index)
         
         ####################
         # code to visualize the embeddings. uncomment the below to visualize embeddings
