@@ -14,16 +14,16 @@ b = tf.constant([5, 5, 5], tf.float32)
 c = a + b  # short for tf.add(a, b)
 
 with tf.Session() as sess:
-	print sess.run(c) # error because a doesn’t have any value
+	# print(sess.run(c)) # error because a doesn’t have any value
 
 	# feed [1, 2, 3] to placeholder a via the dict {a: [1, 2, 3]}
 	# fetch value of c
-	print sess.run(c, {a: [1, 2, 3]}) # >> [6. 7. 8.]
+	print (sess.run(c, {a: [1, 2, 3]})) # >> [6. 7. 8.]
 
 
 # Example 2: feed_dict with variables
 a = tf.add(2, 5)
-b = tf.mul(a, 3)
+b = tf.multiply(a, 3)
 
 with tf.Session() as sess:
 	# define a dictionary that says to replace the value of 'a' with 15
