@@ -33,7 +33,7 @@ n_samples = sheet.nrows - 1
 # name your variable loss
 
 # Step 6: using gradient descent with learning rate of 0.01 to minimize loss
-optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.001).minimize(loss)
+# optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.001).minimize(loss)
  
 # Phase 2: Train our model
 with tf.Session() as sess:
@@ -47,7 +47,7 @@ with tf.Session() as sess:
 			# Session runs optimizer to minimize loss and fetch the value of loss
 			# TO DO: write sess.run()
 			total_loss += l
-		print "Epoch {0}: {1}".format(i, total_loss/n_samples)
+		print ("Epoch {0}: {1}".format(i, total_loss/n_samples))
 	
 # plot the results
 # X, Y = data.T[0], data.T[1]

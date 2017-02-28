@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import xlrd
 
-DATA_FILE = 'data/fire_theft.xls'
+DATA_FILE = '../data/fire_theft.xls'
 
 # Step 1: read in data from the .xls file
 book = xlrd.open_workbook(DATA_FILE, encoding_override="utf-8")
@@ -47,7 +47,7 @@ with tf.Session() as sess:
 			# Session runs train_op and fetch values of loss
 			_, l = sess.run([optimizer, loss], feed_dict={X: x, Y:y}) 
 			total_loss += l
-		print 'Epoch {0}: {1}'.format(i, total_loss/n_samples)
+		print ('Epoch {0}: {1}'.format(i, total_loss/n_samples))
 
 	# close the writer when you're done using it
 	writer.close() 
