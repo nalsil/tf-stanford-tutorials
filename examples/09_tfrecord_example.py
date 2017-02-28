@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 
 # image supposed to have shape: 480 x 640 x 3 = 921600
-IMAGE_PATH = '/Users/Chip/data/misc/'
+# IMAGE_PATH = '/Users/Chip/data/misc/'
+IMAGE_PATH = '../data/misc/'
 
 def get_image_binary(filename):
     """ You can read in the image using tensorflow too, but it's a drag

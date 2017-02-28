@@ -16,7 +16,7 @@ N_CLASSES = 10
 
 # Step 1: Read in data
 # using TF Learn's built in function to load MNIST data to the folder data/mnist
-mnist = input_data.read_data_sets("/data/mnist", one_hot=True)
+mnist = input_data.read_data_sets("../data/mnist", one_hot=True)
 
 # Step 2: Define paramaters for the model
 LEARNING_RATE = 0.001
@@ -104,7 +104,7 @@ with tf.variable_scope('softmax_linear') as scope:
 # use softmax cross entropy with logits as the loss function
 # compute mean cross entropy, softmax is applied internally
 with tf.name_scope('loss'):
-    entropy = tf.nn.softmax_cross_entropy_with_logits(logits, Y)
+    entropy = tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=Y)
     loss = tf.reduce_mean(entropy, name='loss')
 
 # Step 7: define training op
@@ -117,7 +117,7 @@ with tf.Session() as sess:
     saver = tf.train.Saver()
     # to visualize using TensorBoard
     writer = tf.summary.FileWriter('./my_graph/mnist', sess.graph)
-    ckpt = tf.train.get_checkpoint_state(os.path.dirname('checkpoints/convnet_mnist_new/checkpoint'))
+    ckpt = tf.train.get_checkpoint_state(os.path.dirname('./checkpoints/convnet_mnist_new/checkpoint'))
     # if that checkpoint exists, restore from checkpoint
     if ckpt and ckpt.model_checkpoint_path:
         saver.restore(sess, ckpt.model_checkpoint_path)
@@ -136,7 +136,7 @@ with tf.Session() as sess:
         if (index + 1) % SKIP_STEP == 0:
             print('Average loss at step {}: {:5.1f}'.format(index + 1, total_loss / SKIP_STEP))
             total_loss = 0.0
-            saver.save(sess, 'checkpoints/convnet_mnist_new/mnist-convnet', index)
+            saver.save(sess, './checkpoints/convnet_mnist_new/mnist-convnet', index)
     
     print("Optimization Finished!") # should be around 0.35 after 25 epochs
     print("Total time: {0} seconds".format(time.time() - start_time))

@@ -8,13 +8,15 @@ import os
 import zipfile
 
 import numpy as np
-from six.moves import urllib
+#from six.moves import urllib
+import urllib
 import tensorflow as tf
 
 # Parameters for downloading data
 DOWNLOAD_URL = 'http://mattmahoney.net/dc/'
 EXPECTED_BYTES = 31344016
-DATA_FOLDER = '/Users/Chip/data/'
+#DATA_FOLDER = '/Users/Chip/data/'
+DATA_FOLDER = '../data/'
 FILE_NAME = 'text8.zip'
 
 def download(file_name, expected_bytes):
@@ -47,7 +49,7 @@ def build_vocab(words, vocab_size):
     count = [('UNK', -1)]
     count.extend(Counter(words).most_common(vocab_size - 1))
     index = 0
-    with open('processed/vocab_1000.tsv', "w") as f:
+    with open('../data/processed/vocab_1000.tsv', "w") as f:
         # f.write("Name\n")
         for word, _ in count:
             dictionary[word] = index
@@ -79,6 +81,7 @@ def get_batch(iterator, batch_size):
         target_batch = np.zeros([batch_size, 1])
         for index in range(batch_size):
             center_batch[index], target_batch[index] = next(iterator)
+
         yield center_batch, target_batch
 
 def process_data(vocab_size, batch_size, skip_window):
@@ -88,6 +91,7 @@ def process_data(vocab_size, batch_size, skip_window):
     index_words = convert_words_to_index(words, dictionary)
     del words # to save memory
     single_gen = generate_sample(index_words, skip_window)
+
     return get_batch(single_gen, batch_size)
 
 def get_index_vocab(vocab_size):

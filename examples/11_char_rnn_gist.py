@@ -29,6 +29,9 @@ def vocab_decode(array, vocab):
 def read_data(filename, vocab, window=NUM_STEPS, overlap=NUM_STEPS/2):
     for text in open(filename):
         text = vocab_encode(text, vocab)
+        # print('len(text)=', len(text), 'window=', window, 'overlap=', overlap )
+        overlap = int(overlap)
+
         for start in range(0, len(text) - window, overlap):
             chunk = text[start: start + window]
             chunk += [0] * (window - len(chunk))
@@ -44,7 +47,9 @@ def read_batch(stream, batch_size=BATCH_SIZE):
     yield batch
 
 def create_rnn(seq, hidden_size=HIDDEN_SIZE):
-    cell = tf.nn.rnn_cell.GRUCell(hidden_size)
+    # cell = tf.nn.rnn_cell.GRUCell(hidden_size)
+    cell = tf.contrib.rnn.GRUCell(hidden_size)
+
     in_state = tf.placeholder_with_default(
             cell.zero_state(tf.shape(seq)[0], tf.float32), [None, hidden_size])
     # this line to calculate the real length of seq
@@ -59,7 +64,7 @@ def create_model(seq, temp, vocab, hidden=HIDDEN_SIZE):
     # fully_connected is syntactic sugar for tf.matmul(w, output) + b
     # it will create w and b for us
     logits = tf.contrib.layers.fully_connected(output, len(vocab), None)
-    loss = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits(logits[:, :-1], seq[:, 1:]))
+    loss = tf.reduce_sum(tf.nn.softmax_cross_entropy_with_logits(logits=logits[:, :-1], labels=seq[:, 1:]))
     # sample the next character from Maxwell-Boltzmann Distribution with temperature temp
     # it works equally well without tf.exp
     sample = tf.multinomial(tf.exp(logits[:, -1] / temp), 1)[:, 0] 
@@ -83,7 +88,7 @@ def training(vocab, seq, loss, optimizer, global_step, temp, sample, in_state, o
                 print('Iter {}. \n    Loss {}. Time {}'.format(iteration, batch_loss, time.time() - start))
                 online_intference(sess, vocab, seq, sample, temp, in_state, out_state)
                 start = time.time()
-                saver.save(sess, 'checkpoints/arvix/char-rnn', iteration)
+                saver.save(sess, './checkpoints/arvix/char-rnn', iteration)
             iteration += 1
 
 def online_intference(sess, vocab, seq, sample, temp, in_state, out_state, seed='T'):
